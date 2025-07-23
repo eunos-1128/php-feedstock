@@ -12,13 +12,20 @@ if [[ "$CI" == "travis" ]]; then
     export TRAVIS="true"
 fi
 
-./configure --prefix=$PREFIX \
-            --with-iconv=$PREFIX \
-            --with-openssl=$PREFIX \
-            --with-libxml-dir=$PREFIX \
-            --with-external-pcre
+if [[ "${target_platform}" == linux-* ]]; then
+    OPCACHE_FLAG="--enable-opcache"
+else
+    OPCACHE_FLAG="--disable-opcache"
+fi
 
-make -j${CPU_COUNT}
+./configure --prefix="${PREFIX}" \
+            --with-iconv="${PREFIX}" \
+            --with-openssl="${PREFIX}" \
+            --with-libxml-dir="${PREFIX}" \
+            --with-external-pcre \
+            ${OPCACHE_FLAG}
+
+make -j"${CPU_COUNT}"
 
 export NO_INTERACTION=1
 if [[ "${target_platform}" == "linux-"* ]]; then
